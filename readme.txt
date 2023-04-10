@@ -7,10 +7,10 @@ Mudanças de pratica:
 A fazer:
     - FILTRAR:, imposto, margem, overhead, receita, recebimentos, risco, total mensal, total acumulado
 
-    - FUNÇOES: conferir valores
+    - FUNÇOES: conferir valores, começar da ultima mudança
 
 Estudar: 
-    - Como alicar a padronização de forma automática (em lote)
+    - 
 
 Erros:
     - Identificar aditivos ADXX
