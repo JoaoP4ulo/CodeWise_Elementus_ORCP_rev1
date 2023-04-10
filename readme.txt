@@ -12,3 +12,5 @@ A fazer:
 Estudar: 
     - Como alicar a padronização de forma automática (em lote)
 
+Erros:
+    - Identificar aditivos ADXX
