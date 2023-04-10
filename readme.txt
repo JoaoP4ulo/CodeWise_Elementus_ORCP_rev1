@@ -14,3 +14,4 @@ Estudar:
 
 Erros:
     - Identificar aditivos ADXX
+    - Filtra coluna "VALOR" para -> mudar <type> para texto -> substituir "." para "," -> mudar <type> para valor, float
