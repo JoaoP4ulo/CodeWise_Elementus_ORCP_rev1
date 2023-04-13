@@ -1,4 +1,3 @@
-128940
 
 Mudanças de pratica:
     - DATAS: ajustar as datas na planilha (só deixar as datas dos meses usuais)
