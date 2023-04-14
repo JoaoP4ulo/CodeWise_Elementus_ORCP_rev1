@@ -6,8 +6,8 @@ import openpyxl
 # caminho_planilhas = 'C:\\Users\\joao.pereira\\Elementus SA\\Elementus SA - Planejamento\\Comercial\\Propostas\\3_Aprovadas\\Input BI'
 # caminho_log ='C:\\repository\\PR_ORCP\\CodeWise_Elementus_ORCP_rev1'
 
-caminho_planilhas = 'C:\Users\jppel\Desktop\ELEMENTUS\BACKUP'
-caminho_log ='C:\Users\jppel\Desktop\ELEMENTUS\ORCP_Python'
+caminho_planilhas = 'C:\\Users\\jppel\\Desktop\\ELEMENTUS\\BACKUP'
+caminho_log ='C:\\Users\\jppel\\Desktop\\ELEMENTUS\\ORCP_Python'
 
 
 arquivo_log = open(f'{caminho_log}\\log.txt', 'r')
@@ -60,8 +60,9 @@ if log == 0:
         if str(linha_data)[:3] == "MÊS":
 
             plan_PBI["DATA"] = plan_PBI["DATA"].apply(lambda x: str(x).replace(str(linha_data), '') if str(x).startswith(str(linha_data)) else x)
-    plan_PBI = plan_PBI.drop(plan_PBI[plan_PBI['DATA'] == ''].index)
-    plan_PBI = pd.DataFrame(plan_PBI)
+    plan_PBI = plan_PBI.dropna(subset=['DATA'])
+    PBI_result = pd.DataFrame(plan_PBI)
+
 
 
     #Filtrando #REF nas Descrição
@@ -72,13 +73,11 @@ if log == 0:
         if str(linha_desc)[:5] == "#REF!":
 
             plan_PBI["DESCRIÇÃO"] = plan_PBI["DESCRIÇÃO"].apply(lambda x: str(x).replace(str(linha_desc), '') if str(x).startswith(str(linha_desc)) else x)
-    plan_PBI = plan_PBI.drop(plan_PBI[plan_PBI['DESCRIÇÃO'] == ''].index)  
-    plan_PBI = pd.DataFrame(plan_PBI) 
+    plan_PBI = plan_PBI.dropna(subset=['DATA'])
+    plan_PBI = plan_PBI.dropna(subset=['DESCRIÇÃO'])
+    PBI_result = pd.DataFrame(plan_PBI)
 
     
-    PBI_result = pd.DataFrame(plan_PBI)
-    PBI_result = PBI_result.drop(PBI_result[PBI_result['DATA'] == ''].index)
-    PBI_result = PBI_result.drop(PBI_result[PBI_result['DESCRIÇÃO'] == ''].index)
     PBI_result.to_csv(f'{caminho_log}\\framework_PBI.txt', sep=';', index=False)
 
     arquivo_log = open(f'{caminho_log}\\log.txt', 'w')
@@ -113,13 +112,35 @@ if log != 0:
         if item not in lista1:
             listagem.append(item)
     
-    if len(lista2)>len(lista1):
         
+
+    if len(listagem)==0:
+        print("OP1")
+        PBI_result = pd.DataFrame(framework_PBI)
+
+    
+        historico2.to_csv(f'{caminho_log}\\historico.txt', sep=';', index=False)
+            
+            
+    if len(lista1)>len(lista2):
+        print("OP2")
+        for filename in listagem:
+            
+            projeto = str(filename)[40:45]
+                    
+            framework_PBI = framework_PBI.drop(framework_PBI[framework_PBI['PR'] == projeto].index)
+            framework_PBI = pd.DataFrame(framework_PBI)
+        PBI_result=pd.DataFrame(framework_PBI)     
+        PBI_result.to_csv(f'{caminho_log}\\framework_PBI.txt', sep=';', index=False)
+        historico2.to_csv(f'{caminho_log}\\historico.txt', sep=';', index=False)
+
+    if len(lista2)>len(lista1):
+        print("OP3")
 
         for filename in listagem:
         
             df = pd.read_excel(filename,sheet_name="PBI",usecols=[0,1,2,3,4,5,6])
-            projeto = str(filename)[104:109]
+            projeto = str(filename)[40:45]
 
             novos_termos = pd.Series([projeto] * len(df))
             df['PR'] = novos_termos
@@ -130,53 +151,38 @@ if log != 0:
         plan_PBI = pd.DataFrame(df_PBI)
         
 
-    if len(listagem)==0:
-        PBI_result = pd.DataFrame(framework_PBI)
+        if len(listagem)==0:
+            None
+        else:
+            plan_PBI['DATA'] = pd.to_datetime(plan_PBI['DATA'], errors='coerce').dt.strftime('%d/%m/%Y')
 
-    
-        historico2.to_csv(f'{caminho_log}\\historico.txt', sep=';', index=False)
+
+
+            #Limpeza de datas
+            for i in range(len(plan_PBI["DATA"])):
+
+                linha_data = plan_PBI["DATA"].iloc[i]
+
+                if str(linha_data)[:3] == "MÊS":
+
+                    plan_PBI["DATA"] = plan_PBI["DATA"].apply(lambda x: str(x).replace(str(linha_data), '') if str(x).startswith(str(linha_data)) else x)
+            plan_PBI = plan_PBI.dropna(subset=['DATA'])
             
-       
-            
-    if len(lista1)>len(lista2):
-        for filename in listagem:
-            
-            projeto = str(filename)[104:109]
-                    
-            framework_PBI = framework_PBI.drop(framework_PBI[framework_PBI['PR'] == projeto].index)
-            framework_PBI = pd.DataFrame(framework_PBI)
-        PBI_result=pd.DataFrame(framework_PBI)     
-        PBI_result.to_csv(f'{caminho_log}\\framework_PBI.txt', sep=';', index=False)
-        historico2.to_csv(f'{caminho_log}\\historico.txt', sep=';', index=False)
-    else:
+            plan_PBI = pd.DataFrame(plan_PBI)
 
-        #Limpeza de datas
-        for i in range(len(framework_PBI["DATA"])):
-            plan_PBI=pd.DataFrame(framework_PBI)
+            #Filtrando #REF nas Descrição
+            for j in range(len(plan_PBI["DESCRIÇÃO"])):
 
-            linha_data = plan_PBI["DATA"].iloc[i]
-
-            if str(linha_data)[:3] == "MÊS":
-
-                plan_PBI["DATA"] = plan_PBI["DATA"].apply(lambda x: str(x).replace(str(linha_data), '') if str(x).startswith(str(linha_data)) else x)
-        plan_PBI = plan_PBI.drop(plan_PBI[plan_PBI['DATA'] == ''].index)
-        plan_PBI = pd.DataFrame(plan_PBI)
-
-                #Filtrando #REF nas Descrição
-        for j in range(len(plan_PBI["DESCRIÇÃO"])):
-
-            linha_desc = plan_PBI["DESCRIÇÃO"].iloc[j]
-                    
-            if str(linha_desc)[:5] == "#REF!":
-
-                plan_PBI["DESCRIÇÃO"] = plan_PBI["DESCRIÇÃO"].apply(lambda x: str(x).replace(str(linha_desc), '') if str(x).startswith(str(linha_desc)) else x)
-        plan_PBI = plan_PBI.drop(plan_PBI[plan_PBI['DESCRIÇÃO'] == ''].index)
-        plan_PBI = pd.DataFrame(plan_PBI)
-
-        PBI_result = pd.concat([framework_PBI,plan_PBI])
-        PBI_result = pd.DataFrame(PBI_result)
+                linha_desc = plan_PBI["DESCRIÇÃO"].iloc[j]
                 
-        PBI_result = PBI_result.drop(PBI_result[PBI_result['DATA'] == ''].index)
-        PBI_result = PBI_result.drop(PBI_result[PBI_result['DESCRIÇÃO'] == ''].index)
-        PBI_result.to_csv(f'{caminho_log}\\framework_PBI.txt', sep=';', index=False)
-        
+                if str(linha_desc)[:5] == "#REF!":
+                    
+                    plan_PBI["DESCRIÇÃO"] = plan_PBI["DESCRIÇÃO"].apply(lambda x: str(x).replace(str(linha_desc), '') if str(x).startswith(str(linha_desc)) else x)
+            plan_PBI = plan_PBI.dropna(subset=['DATA'])
+            plan_PBI = plan_PBI.dropna(subset=['DESCRIÇÃO'])
+
+            PBI_result = pd.concat([framework_PBI,plan_PBI])
+            PBI_result = pd.DataFrame(PBI_result)
+            
+            PBI_result.to_csv(f'{caminho_log}\\framework_PBI.txt', sep=';', index=False)
+    

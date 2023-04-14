@@ -6,7 +6,7 @@ frame = pd.DataFrame(frame)
 
 valor_dd = frame[frame['SUBCATEGORIA'] == 'Despesa Direta']
 
-pr = valor_dd[valor_dd["PR"]=="PR396"]
+pr = valor_dd[valor_dd["PR"]=="PR303"]
 pr = pd.DataFrame(pr[pr['VALOR']!=0])
 soma = pr["VALOR"].sum()
 print(soma)
