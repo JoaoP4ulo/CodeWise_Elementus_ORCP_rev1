@@ -26,7 +26,5 @@ IMPORTANTE:
 PBI_result -> tabela a ser puxada no PowerBI
 
 
-Funções possíveis mas o JP não tinha tempo : 
-    - Enviar um relatório por email de erros ou inconsitência nos valores
-    - Caso o erro seja com relação a exclusão de linhas, criar uma função para completar as linhas faltantes (manipulação de arquivo)
+
 
